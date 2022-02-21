@@ -5,6 +5,8 @@ services:
     image: portainer/portainer-ce:latest
     container_name: portainer
     restart: unless-stopped
+    networks:
+      - proxy
     security_opt:
       - no-new-privileges:true
     volumes:
@@ -15,6 +17,9 @@ services:
       - "traefik.enable=true"
       - "traefik.docker.network=proxy"
       - "traefik.http.routers.portainer-secure.entrypoints=websecure"
-      - "traefik.http.routers.portainer-secure.rule=Host(`pt.imkai.com`,`pq.imkai.com` )"
+      - "traefik.http.routers.portainer-secure.rule=Host(`pq.imkai.com` )"
       - "traefik.http.routers.portainer-secure.service=portainer"
       - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+networks:
+  proxy:
+    external: true
