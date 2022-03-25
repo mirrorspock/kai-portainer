@@ -1,0 +1,28 @@
+version: '3'
+services:
+  grafana:
+    image: grafana/grafana
+    environment:
+      - VIRTUAL_HOST=kaifana.imkai.com
+      - GF_SECURITY_ADMIN_PASSWORD=${PASS}
+      - GF_INSTALL_PLUGINS=grafana-worldmap-panel,grafana-simple-json-datasource
+    volumes:
+      - grafana_db:/var/lib/grafana
+#    depends_on:
+#      - prometheus
+    networks:
+      - proxy
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.grafana-secure.entrypoints=websecure"
+      - "traefik.http.routers.grafana-secure.rule=Host(`kaifana.imkai.com`)"
+      - "traefik.http.routers.grafana-secure.service=grafana"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+
+volumes:
+  grafana_db:
+networks:
+  proxy:
+    external: true

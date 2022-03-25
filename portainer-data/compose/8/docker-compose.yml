@@ -1,0 +1,9 @@
+version: '3.3'
+services:
+    monero-miner:
+        restart: always
+        environment:
+            - 'POOL_URL=pool.supportxmr.com:5555'
+            - POOL_USER=46Ljz3rdCZVdCDPMftdYtvbHf3psAHnigbDuJmFyWxJu8vpgozh9fb4j21UxxZe8wuYPqM8kJnKLhi6gB9HV9YdUBk8QN5L
+        container_name: monero
+        image: pmietlicki/monero-miner

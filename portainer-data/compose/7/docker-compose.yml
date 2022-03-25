@@ -1,0 +1,46 @@
+version: "3"
+
+services:
+  nextcloud:
+    image: nextcloud:latest
+    restart: unless-stopped
+    environment:
+      - NEXTCLOUD_TRUSTED_DOMAINS=cloud.imkai.com
+      - MYSQL_HOST=mysql
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD=nextcloud
+    volumes:
+      - nextcloud:/var/www/html
+    networks: 
+      - default
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.cloud-secure.entrypoints=websecure"
+      - "traefik.http.routers.cloud-secure.rule=Host(`cloud.imkai.com` )"
+      - "traefik.http.routers.cloud-secure.service=cloud"
+      - "traefik.http.services.cloud.loadbalancer.server.port=80"
+
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    networks:
+      - default
+    environment:
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD=nextcloud
+      - MYSQL_ROOT_PASSWORD=nextcloud
+    volumes:
+      - mysql:/var/lib/mysql
+
+
+networks:
+  proxy:
+    external: true
+volumes:
+  mysql:
+  nextcloud:
+
